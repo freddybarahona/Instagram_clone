@@ -6,4 +6,5 @@ Este proyecto tiene el diagrama de la base de datos que creamos para el clon de 
 2.Nury Aguilar
 
 ## Requerimientos
-- Excalidraw : <link del excalidraw>
+- Excalidraw : https://excalidraw.com/#json=wwb-KvU1xsBB59eiuPvAQ,38woSfg08OEvPgJSBBCg_w
+

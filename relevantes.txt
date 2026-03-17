@@ -1,0 +1,56 @@
+-se centra en el contenido visual 
+-usuarios publican fotos y video en perfil
+-feed para ver sus seguidores personalizado
+-stories publ. temporales tiempo: 24h.
+-cada publicacion recibe comentarios y reacciones de otros usuarios
+	|_un usuario puede poner 1 o mas comentarios en una publicacion
+	|_un usuario puede poner 1 corazon por publicacion
+-los usuarios pueden etiquetarse entre si en posts y usar hashtag
+	|_un usuario en un post puede poner 1 o mas etiquetas
+	|_un usuario en un post puede poner 1 0 mas hashtags
+-los usuarios pueden hablar por mensaje entre ellos
+	|_un usuario puede tener multiples chats
+
+-----------------TABLAS BASE--------------------------------------
+
+-Usuario
+	perfil: publico || privado || empresa
+	usuario: unico
+	emai: unico
+	contra: unica
+	seguidos: 
+	reacciones:
+	seguidores:
+	cont_prom: 1 o 0
+
+-Creador de contenido
+	perfil: publico
+-Cuenta de negocio
+	perfil: empresa
+	contenido promocionado= 1
+	
+------------------ENTIDADES Y ATRIBUTOS------------------------------
+nombre_usuario
+email
+contrasena
+post
+foto
+video
+descripcion
+hashtag
+like
+comentario
+respuesta = coment_anid
+estado_cuenta
+seguidos
+tipo_seguimiento
+perfil
+requ_aprob
+mensaje
+stories
+hora_ini
+hashtags
+coleccion
+est_col
+etiquetas
+
