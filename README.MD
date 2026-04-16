@@ -18,7 +18,8 @@ Database=InstagramClone;TrustServerCertificate=True" Microsoft.EntityFrameworkCo
 --project InstagramClone.Domain --startup-project InstagramClone.WebApi 
 --context-dir Database/SqlServer/Context --output-dir Database/SqlServer/Entities --verbose
 ``` 
-(si la creas por primera vez y no funciona quitale el --no-build --force)
+(si la creas por primera vez y no funciona quitale el --no-build --force, tambien el --verbose puedes obviarlo es para ver a que archivos entra el dbcontext es para ver errores)
+
 ___
 ### Detalles
 ```
