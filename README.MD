@@ -1,9 +1,9 @@
 
 ### Tabla de contenidos
-- [Colaboradores](###Colaboradores)
-- [Construccion base de datos](###Construccion)
-- [Detalles Tecnicos](###Detalles)
-- [Capturas](###Capturas)
+- [Colaboradores](#colaboradores)
+- [Construcción base de datos](#construccion)
+- [Detalles Técnicos](#detalles)
+- [Capturas](#capturas)
 ___
 ### Colaboradores
 1.Freddy Barahona
@@ -38,4 +38,4 @@ builder.Services.AddSqlServer<InstagramCloneContext>(builder.Configuration.GetCo
     * `builder.Configuration.GetConnectionString("Database")` busca la clave ConnectionStrings:Database en appsettings.json o en otras fuentes de configuración.
 ___
 ### Capturas
-(Proyecto_Final_InstagramClone/capturas/relaciones_tablas.svg)
+![Relaciones de tablas](capturas/relaciones_tablas.svg)
