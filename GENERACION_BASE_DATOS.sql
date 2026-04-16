@@ -1,0 +1,11 @@
+USE InstagramClon
+GO 
+
+CREATE TABLE PerfilTipo(
+	IdPerfil		INT					NOT NULL, 
+	Descripcion		VARCHAR(15)			NOT NULL,
+	CreatedAt		DATETIME2			NOT NULL DEFAULT SYSUTCDATETIME()
+
+	CONSTRAINT PK_PerfilTipo PRIMARY KEY (IdPerfil)
+);
+GO 

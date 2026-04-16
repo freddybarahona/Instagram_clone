@@ -1,8 +1,14 @@
-##### Tabla de contenidos
 
+### Tabla de contenidos
+- [Colaboradores](###Colaboradores)
 - [Construccion base de datos](###Construccion)
 - [Detalles Tecnicos](###Detalles)
 - [Capturas](###Capturas)
+___
+### Colaboradores
+1.Freddy Barahona
+2.Nury Aguilar
+
 ___
 ### construccion 
 
@@ -33,5 +39,3 @@ builder.Services.AddSqlServer<InstagramCloneContext>(builder.Configuration.GetCo
 ___
 ### Capturas
 (Proyecto_Final_InstagramClone/capturas/relaciones_tablas.svg)
-
-
