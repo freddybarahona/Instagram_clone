@@ -1,7 +1,7 @@
 ﻿using InstagramClone.Shared.Constants;
 using System.ComponentModel.DataAnnotations;
 
-namespace InstagramClone.Application.Models.Requests
+namespace InstagramClone.Application.Models.Requests.Users
 {
     public class CreateUserRequest
     {

@@ -4,7 +4,7 @@ namespace InstagramClone.Application.Helpers
 {
     public class ResponseHelper
     {
-        public static GenericResponse<T> Create<T>(T data, string message)
+        public static GenericResponse<T> Create<T>(T data, string message = "Solicitud Realizada Correctamente")
         {
             return new GenericResponse<T>
             {

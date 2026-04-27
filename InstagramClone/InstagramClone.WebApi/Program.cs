@@ -1,19 +1,10 @@
-using InstagramClone.Application.Interfaces.Services;
-using InstagramClone.Application.Services;
-using InstagramClone.Domain.Database.SqlServer.Context;
+using InstagramClone.WebApi.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
-
-// Add services to the container.
-
-builder.Services.AddControllers();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
-// este builder es una funcionalidad que debe ponerse antes de construir porque sino esta construyendo y luego cambiando la config inicial DARA ERROR
-builder.Services.AddScoped<IUserService, UserService>();
-
-//Database
-builder.Services.AddSqlServer<InstagramCloneContext>(builder.Configuration.GetConnectionString("Database"));
+//-------------------------------------------------
+//esto conecta a la extension que tiene todo lo que necesita la app para funcionar y conectarse
+builder.Services.AddCore(builder.Configuration);
+//-------------------------------------------------
 
 var app = builder.Build();
 // Configure the HTTP request pipeline.
@@ -22,10 +13,9 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
-app.UseHttpsRedirection();
-
-app.UseAuthorization();
-
-app.MapControllers();
+//-------------------------------------------------
+//esta extension anade las Redirections, authorization y mapcontrollers
+app.AddFinals(app);
+//-------------------------------------------------
 
 app.Run();

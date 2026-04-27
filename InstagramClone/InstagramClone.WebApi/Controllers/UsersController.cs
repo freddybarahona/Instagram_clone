@@ -1,32 +1,25 @@
 ﻿using InstagramClone.Application.Interfaces.Services;
-using InstagramClone.Application.Models.Requests;
+using InstagramClone.Application.Models.Requests.Users;
 using Microsoft.AspNetCore.Mvc;
 
 namespace InstagramClone.WebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UsersController(IUserService userService) : ControllerBase
+    public class UsersController(IUserService service) : ControllerBase
     {
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateUserRequest Model)
         {
-            var rsp = userService.Create(Model);//rsp = response
-            return Ok(rsp);
+            var srv = await service.Create(Model);//srv = srv
+            return Ok(srv);
         }
 
-        [HttpPut("data/{id:guid}")]
-        public async Task<IActionResult> UpdateUser(Guid id, [FromBody] UpdateUserRequest model)
+        [HttpGet]
+        public async Task<IActionResult> GetUser([FromQuery] GetUsersRequest request)
         {
-            var rsp = userService.UpdateUser(id, model);
-            return Ok(rsp);
-        }
-
-        [HttpPut("password/{id:guid}")]
-        public async Task<IActionResult> UpdateUser(Guid id, [FromBody] UpdatePasswordUserRequest model)
-        {
-            var rsp = userService.UpdatePasswordUser(id, model);
-            return Ok(rsp);
+            var srv = await service.GetUser(request);
+            return Ok(srv);
         }
     }
 }

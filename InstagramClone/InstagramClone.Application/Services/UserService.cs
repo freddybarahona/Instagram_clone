@@ -1,37 +1,75 @@
 ﻿using InstagramClone.Application.Helpers;
 using InstagramClone.Application.Interfaces.Services;
 using InstagramClone.Application.Models.DTOs;
-using InstagramClone.Application.Models.Requests;
+using InstagramClone.Application.Models.Requests.Users;
 using InstagramClone.Application.Models.Responses;
+using InstagramClone.Domain.Database.SqlServer.Entities;
+using InstagramClone.Domain.Interfaces.Repositories;
 using InstagramClone.Shared.Helper;
 
 namespace InstagramClone.Application.Services
 {
-    public class UserService : IUserService
+    public class UserService(IUserRepository repository, ITypeUserRepository typeUserRepository) : IUserService
     {
-        public GenericResponse<UserDTO> Create(CreateUserRequest Model)
+        public async Task<GenericResponse<UserDTO>> Create(CreateUserRequest model)
         {
-            var User = new UserDTO
+            var typeUser = await typeUserRepository.Get(model.TypeUser); // obtiene el tipo de usuario especificado en la tabla TypeUser
+            var userEntity = new Domain.Database.SqlServer.Entities.User // crea una nueva entidad de usuario con los datos proporcionados en el modelo de solicitud
             {
-                IdUser = Guid.NewGuid(),
-                NameUser = Model.NameUser,
-                Email = Model.Email,
-                Password = Model.Password,
-                //TypeUserId = en proceso porque hay que conectar la tabla TypeUser
-                Visibility = Model.Visibility,
-                CreatedAt = DateTimeHelper.UtcNow()
+                NameUser = model.NameUser,
+                Email = model.Email,
+                Password = model.Password,
+                Visibility = model.Visibility,
+                TypeUserId = typeUser.IdTypeUser,
+                CreatedAt = DateTimeHelper.UtcNow(),
+                UpdatedAt = DateTimeHelper.UtcNow(),
             };
-            return ResponseHelper.Create(User, "Usuario creado exitosamente");
+
+            var created = await repository.Create(userEntity); // guarda la nueva entidad de usuario en la base de datos utilizando el repositorio de usuarios
+            return ResponseHelper.Create(Map(created));
         }
 
-        public GenericResponse<UserDTO> UpdatePasswordUser(Guid id, UpdatePasswordUserRequest Model)
+
+        public async Task<GenericResponse<List<UserDTO>>> GetUser(GetUsersRequest model)
         {
-            throw new NotImplementedException();
+            var queryable = repository.Queryable();
+            //filtrado de nombre
+            if (!string.IsNullOrWhiteSpace(model.NameUser))
+            {
+                queryable = queryable.Where(x => x.NameUser.Contains(model.NameUser ?? ""));
+            }
+            //filtrado de id
+            if (!string.IsNullOrWhiteSpace(model.Id.ToString()))
+            {
+                queryable = queryable.Where(x => x.IdUser == model.Id);
+            }
+
+            //realizar paginacion y consulta
+            var users = queryable.Skip(model.offset).Take(model.limit).ToList();
+            //mapear colaboradores y guardarlos en una lista
+            List<UserDTO> mapped = [];
+            foreach (var user in users)
+            {
+                mapped.Add(Map(user));// el error esta aqui revisalo
+            }
+
+            return ResponseHelper.Create(mapped);
+
         }
 
-        public GenericResponse<UserDTO> UpdateUser(Guid id, UpdateUserRequest Model)
+
+        private static UserDTO Map(User user)
         {
-            throw new NotImplementedException();
+            return new UserDTO
+            {
+                IdUser = user.IdUser,
+                NameUser = user.NameUser,
+                Email = user.Email,
+                Password = user.Password,
+                Visibility = user.Visibility,
+                TypeUser = user.TypeUser.ToString(),
+                CreatedAt = user.CreatedAt,
+            };
         }
     }
 }
