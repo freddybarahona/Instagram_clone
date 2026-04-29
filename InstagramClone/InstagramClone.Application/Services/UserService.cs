@@ -6,6 +6,7 @@ using InstagramClone.Application.Models.Responses;
 using InstagramClone.Domain.Database.SqlServer.Entities;
 using InstagramClone.Domain.Interfaces.Repositories;
 using InstagramClone.Shared.Helper;
+using Microsoft.EntityFrameworkCore;
 
 namespace InstagramClone.Application.Services
 {
@@ -45,12 +46,17 @@ namespace InstagramClone.Application.Services
             }
 
             //realizar paginacion y consulta
-            var users = queryable.Skip(model.offset).Take(model.limit).ToList();
+            var users = await queryable
+                            //en este caso este include no es necesario porque el mapeo del DTO se hace con el IdTypeUser, pero si quisieramos traer la informacion completa del tipo de usuario si seria necesario este include
+                            //.Include(u => u.TypeUser)//lo que hace esto es traer la informacion completa del tipo de usuario para poder mapearlo en el DTO
+                            .Skip(model.offset)
+                            .Take(model.limit)
+                            .ToListAsync();
             //mapear colaboradores y guardarlos en una lista
             List<UserDTO> mapped = [];
             foreach (var user in users)
             {
-                mapped.Add(Map(user));// el error esta aqui revisalo
+                mapped.Add(Map(user));
             }
 
             return ResponseHelper.Create(mapped);
@@ -67,7 +73,7 @@ namespace InstagramClone.Application.Services
                 Email = user.Email,
                 Password = user.Password,
                 Visibility = user.Visibility,
-                TypeUser = user.TypeUser.ToString(),
+                TypeUser = user.TypeUser?.IdTypeUser.ToString() ?? user.TypeUserId.ToString(), //la primera opcion es porque el metodo crear usuario hace un llamado a la tabla de TypeUser para comparar pero el segundo llamado es porque el get no hace ese llamado ya que debe usar el id que ya esta en la tabla User por eso el primer llamado va a dar null
                 CreatedAt = user.CreatedAt,
             };
         }
