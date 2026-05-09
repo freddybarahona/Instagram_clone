@@ -7,5 +7,6 @@
         public const string MIN_LENGTH = "El minimo de caracteres es {1} para el {0}";
         public const string EMAIL_ADDRESS = "Este campo requiere una direccion de correo";
         public const string PASSWORDS_MUST_MATCH = "Ambos campos {0} y {1} deben coincidir";
+        public const string VALIDATION_MESSAGE = "Uno o mas validaciones  necesitan atencion";
     }
 }

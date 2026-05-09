@@ -1,6 +1,14 @@
 using InstagramClone.WebApi.Extensions;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
+
+//-------------------------------------------------
+//integracion del host de serilog
+builder.Host.UseSerilog();
+//-------------------------------------------------
+
+
 //-------------------------------------------------
 //esto conecta a la extension que tiene todo lo que necesita la app para funcionar y conectarse
 builder.Services.AddCore(builder.Configuration);

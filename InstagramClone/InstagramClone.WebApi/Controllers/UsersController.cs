@@ -21,5 +21,12 @@ namespace InstagramClone.WebApi.Controllers
             var srv = await service.GetUser(request);
             return Ok(srv);
         }
+
+        [HttpGet("{id:guid}")]
+        public async Task<IActionResult> GetUserById(Guid id)
+        {
+            var srv = await service.GetUserById(id);
+            return Ok(srv);
+        }
     }
 }

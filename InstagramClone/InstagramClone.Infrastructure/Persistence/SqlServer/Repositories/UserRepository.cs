@@ -35,6 +35,18 @@ namespace InstagramClone.Infrastructure.Persistence.SqlServer.Repositories
             }
         }
 
+        public async Task<User?> GetUserById(Guid UserId)
+        {
+            try
+            {
+                return await context.Users.FirstOrDefaultAsync(x => x.IdUser == UserId && x.DeletedAt == null);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
         public async Task<bool> IfExist(string name)
         {
             await context.Users.AnyAsync(x => x.NameUser == name);

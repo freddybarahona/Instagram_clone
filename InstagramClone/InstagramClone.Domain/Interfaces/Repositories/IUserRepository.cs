@@ -6,6 +6,7 @@ namespace InstagramClone.Domain.Interfaces.Repositories
     {
         Task<User> Create(User user);
         Task<User?> GetUser(string name);
+        Task<User?> GetUserById(Guid UserId);
         Task<bool> IfExist(string name);
         IQueryable<User> Queryable();
 

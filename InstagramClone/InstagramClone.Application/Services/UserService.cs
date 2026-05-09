@@ -63,6 +63,17 @@ namespace InstagramClone.Application.Services
 
         }
 
+        public async Task<GenericResponse<UserDTO?>> GetUserById(Guid UserId)
+        {
+            var UserEntity = await GetTheUser(UserId);
+            return ResponseHelper.Create(Map(UserEntity));
+        }
+
+        public async Task<User> GetTheUser(Guid UserId)
+        {
+            return await repository.GetUserById(UserId)
+                ?? throw new Exception("no hay usuario bro");
+        }
 
         private static UserDTO Map(User user)
         {
