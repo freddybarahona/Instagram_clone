@@ -4,13 +4,17 @@ using InstagramClone.Application.Models.DTOs;
 using InstagramClone.Application.Models.Requests.Users;
 using InstagramClone.Application.Models.Responses;
 using InstagramClone.Domain.Database.SqlServer.Entities;
+using InstagramClone.Domain.Exceptions;
 using InstagramClone.Domain.Interfaces.Repositories;
+using InstagramClone.Shared;
+using InstagramClone.Shared.Constants;
 using InstagramClone.Shared.Helper;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace InstagramClone.Application.Services
 {
-    public class UserService(IUserRepository repository, ITypeUserRepository typeUserRepository) : IUserService
+    public class UserService(IUserRepository repository, ITypeUserRepository typeUserRepository, IConfiguration configuration) : IUserService
     {
         public async Task<GenericResponse<UserDTO>> Create(CreateUserRequest model)
         {
@@ -19,7 +23,7 @@ namespace InstagramClone.Application.Services
             {
                 NameUser = model.NameUser,
                 Email = model.Email,
-                Password = model.Password,
+                Password = Hasher.HashPassword(model.Password),
                 Visibility = model.Visibility,
                 TypeUserId = typeUser.IdTypeUser,
                 CreatedAt = DateTimeHelper.UtcNow(),
@@ -72,7 +76,7 @@ namespace InstagramClone.Application.Services
         public async Task<User> GetTheUser(Guid UserId)
         {
             return await repository.GetUserById(UserId)
-                ?? throw new Exception("no hay usuario bro");
+            ?? throw new NotFoundException(ResponseConstants.USER_NOT_EXISTS);
         }
 
         private static UserDTO Map(User user)
@@ -87,6 +91,36 @@ namespace InstagramClone.Application.Services
                 TypeUser = user.TypeUser?.IdTypeUser.ToString() ?? user.TypeUserId.ToString(), //la primera opcion es porque el metodo crear usuario hace un llamado a la tabla de TypeUser para comparar pero el segundo llamado es porque el get no hace ese llamado ya que debe usar el id que ya esta en la tabla User por eso el primer llamado va a dar null
                 CreatedAt = user.CreatedAt,
             };
+        }
+
+        //metodo para crear al primer usuario
+        public async Task CreateFirstUser()
+        {
+            var hasCreated = await repository.HasCreated();
+
+            if (hasCreated) return;
+
+            var nameUser = configuration[ConfigurationConstants.FIRST_APP_TIME_USER_NAMEUSER]
+                ?? throw new Exception(ResponseConstants.ConfigurationPropertyNotFound(ConfigurationConstants.FIRST_APP_TIME_USER_NAMEUSER));
+
+            var email = configuration[ConfigurationConstants.FIRST_APP_TIME_USER_EMAIL]
+                ?? throw new Exception(ResponseConstants.ConfigurationPropertyNotFound(ConfigurationConstants.FIRST_APP_TIME_USER_EMAIL));
+
+            var password = configuration[ConfigurationConstants.FIRST_APP_TIME_USER_PASSWORD]
+                ?? throw new Exception(ResponseConstants.ConfigurationPropertyNotFound(ConfigurationConstants.FIRST_APP_TIME_USER_PASSWORD));
+
+            var idTypeUser = configuration[ConfigurationConstants.FIRST_APP_TIME_USER_IDTYPEUSER]
+                ?? throw new Exception(ResponseConstants.ConfigurationPropertyNotFound(ConfigurationConstants.FIRST_APP_TIME_USER_IDTYPEUSER));
+
+            await repository.Create(
+                new User
+                {
+                    NameUser = nameUser,
+                    Email = email,
+                    Password = Hasher.HashPassword(password),
+                    TypeUserId = Guid.Parse(idTypeUser) //recuerda como convertirlo te puede servir despues
+                });
+
         }
     }
 }

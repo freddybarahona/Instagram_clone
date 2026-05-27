@@ -23,6 +23,18 @@ namespace InstagramClone.Infrastructure.Persistence.SqlServer.Repositories
             }
         }
 
+        public async Task<User?> Get(string email)
+        {
+            try
+            {
+                return await context.Users.FirstOrDefaultAsync(x => x.Email == email && x.DeletedAt == null);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
         public async Task<User?> GetUser(string name)
         {
             try
@@ -44,6 +56,19 @@ namespace InstagramClone.Infrastructure.Persistence.SqlServer.Repositories
             catch (Exception)
             {
                 throw;
+            }
+        }
+
+        public async Task<bool> HasCreated()
+        {
+            try
+            {
+                //verifica que la tabla tenga minimo 1 usuario
+                return await context.Users.AnyAsync();
+            }
+            catch
+            {
+                return false;
             }
         }
 

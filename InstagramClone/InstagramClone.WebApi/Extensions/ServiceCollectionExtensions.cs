@@ -2,12 +2,16 @@
 using InstagramClone.Application.Interfaces.Services;
 using InstagramClone.Application.Services;
 using InstagramClone.Domain.Database.SqlServer.Context;
+using InstagramClone.Domain.Exceptions;
 using InstagramClone.Domain.Interfaces.Repositories;
 using InstagramClone.Infrastructure.Persistence.SqlServer.Repositories;
 using InstagramClone.Shared.Constants;
 using InstagramClone.WebApi.Middlewares;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using Serilog;
+using System.Text;
 
 namespace InstagramClone.WebApi.Extensions
 {
@@ -20,6 +24,7 @@ namespace InstagramClone.WebApi.Extensions
         public static void AddServices(this IServiceCollection services)
         {
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IAuthService, AuthService>();
         }
         /// <summary>
         /// anade un tipo de conexion a los repositorios
@@ -45,13 +50,31 @@ namespace InstagramClone.WebApi.Extensions
                 .WriteTo.Console()
                 .CreateLogger();
         }
+
+
+        /// <summary>
+        /// aqui se almacenan los metodos para la inicializacion del primer usuario al arrancar la app
+        /// </summary>
+        /// <param name="services"></param>
+        /// <returns></returns>
+        public async static Task Initialize(this IServiceCollection services)
+        {
+            var provider = services.BuildServiceProvider();
+            var scope = provider.CreateAsyncScope();
+
+            var userService = scope.ServiceProvider.GetRequiredService<IUserService>();
+            await userService.CreateFirstUser();
+        }
+
+
         /// <summary>
         /// anade todo incluido los servicios y repositorios junto a lo necesario para que la app arranque
         /// </summary>
         /// <param name="services"></param>
         /// <param name="configuration"></param>
-        public static void AddCore(this IServiceCollection services, IConfiguration configuration)
+        public static async Task AddCore(this IServiceCollection services, IConfiguration configuration)
         {
+            //-------------------------RESPONSE PERSONALIZADA DE INVALIDOS DEL CONTROLADOR ----------------------------------------------------
             services.AddControllers().ConfigureApiBehaviorOptions(options =>
             {
                 options.InvalidModelStateResponseFactory = (errorContext) =>
@@ -64,12 +87,73 @@ namespace InstagramClone.WebApi.Extensions
                     return new BadRequestObjectResult(rsp);
                 };
             });
+            //-------------------------------------------------------------------------------------------------------------------------------
             services.AddOpenApi();
-            services.AddSqlServer<InstagramCloneContext>(configuration.GetConnectionString("Database"));
+            //--------------------------------CONEXION BASE DE DATOS----------------------------------------
+            /*si no encuentras la base de datos en appsettings(produccion) buscala en los secrets(desarrollo)*/
+            var DatabaseConnectionString = Environment.GetEnvironmentVariable(ConfigurationConstants.CONNECTION_STRING_DATABASE)
+                ?? configuration[ConfigurationConstants.CONNECTION_STRING_DATABASE];
+            /*se hace la conexion con la base de datos*/
+            services.AddSqlServer<InstagramCloneContext>(configuration.GetConnectionString(DatabaseConnectionString));
+            //------------------------------------------------------------------------
             services.AddRepositories();
             services.AddServices();
             services.AddMiddlewares();
             services.AddLogging();
+            //-----------------------AUTENTICACION DEL USUARIO-----------------------
+            AddAuth(services, configuration);
+            //-----------------------INICIALIZACION DE USUARIO-----------------------
+            await Initialize(services);
+        }
+
+        public static void AddAuth(IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddAuthentication(builder =>
+            {
+                //aqui necesito el nugget de jwtBearer - validacion de autenticacion base se configura con la autenticacion Jwt
+                builder.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                //validacion de los token no validos
+                builder.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(Builder =>
+            {
+                //verifica si los datos del que hace la solicitud estan
+                //nosotros
+                var issuer = Environment.GetEnvironmentVariable(ConfigurationConstants.JWT_ISSUER)
+                ?? configuration[ConfigurationConstants.JWT_ISSUER]
+                ?? throw new Exception(ResponseConstants.ConfigurationPropertyNotFound(ConfigurationConstants.JWT_ISSUER));
+                //frontend
+                var audience = Environment.GetEnvironmentVariable(ConfigurationConstants.JWT_AUDIENCE)
+                ?? configuration[ConfigurationConstants.JWT_AUDIENCE]
+                ?? throw new Exception(ResponseConstants.ConfigurationPropertyNotFound(ConfigurationConstants.JWT_AUDIENCE));
+                //clave privada para crear tokens
+                var privateKey = Environment.GetEnvironmentVariable(ConfigurationConstants.JWT_PRIVATE_KEY)
+                ?? configuration[ConfigurationConstants.JWT_PRIVATE_KEY]
+                ?? throw new Exception(ResponseConstants.ConfigurationPropertyNotFound(ConfigurationConstants.JWT_PRIVATE_KEY));
+                //tiempo de expiracion
+                var expirationInMinutes = Environment.GetEnvironmentVariable(ConfigurationConstants.JWT_EXPIRATION_IN_MINUTES)
+                ?? configuration[ConfigurationConstants.JWT_EXPIRATION_IN_MINUTES]
+                ?? "10";
+
+                //Valida que todos los parametros sean correctos
+                Builder.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidIssuer = issuer,
+                    ValidateAudience = true,
+                    ValidAudience = audience,
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(privateKey)),
+                    ClockSkew = TimeSpan.Zero
+                };
+                Builder.Events = new JwtBearerEvents
+                {
+                    OnChallenge = async context =>
+                    {
+                        throw new UnauthorizedUserException(ResponseConstants.AUTH_TOKEN_NOT_FOUND);
+                    }
+                };
+            });
+            services.AddAuthorization();
         }
     }
 }

@@ -10,5 +10,7 @@ namespace InstagramClone.Application.Interfaces.Services
         public Task<GenericResponse<List<UserDTO>>> GetUser(GetUsersRequest model);
         public Task<GenericResponse<UserDTO?>> GetUserById(Guid UserId);
         //public Task<Generic> DeleteUser()
+
+        public Task CreateFirstUser();
     }
 }
