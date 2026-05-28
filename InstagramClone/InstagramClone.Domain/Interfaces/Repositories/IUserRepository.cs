@@ -9,6 +9,7 @@ namespace InstagramClone.Domain.Interfaces.Repositories
         Task<User?> Get(string email);
         Task<User?> GetUserById(Guid UserId);
         Task<bool> IfExist(string name);
+        Task<bool> IfExist(Guid id);
         IQueryable<User> Queryable();
         Task<bool> HasCreated();
 

@@ -25,6 +25,7 @@ namespace InstagramClone.WebApi.Extensions
         {
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IAuthService, AuthService>();
+            services.AddScoped<IPostService, PostService>();
         }
         /// <summary>
         /// anade un tipo de conexion a los repositorios
@@ -32,9 +33,10 @@ namespace InstagramClone.WebApi.Extensions
         /// <param name="services"></param>
         public static void AddRepositories(this IServiceCollection services)
         {
-
+            services.AddTransient<IHashtagRepository, HashtagRepository>();
             services.AddTransient<IUserRepository, UserRepository>();
             services.AddTransient<ITypeUserRepository, TypeUserRepository>();
+            services.AddTransient<IPostRepository, PostRepository>();
         }
 
         public static void AddMiddlewares(this IServiceCollection services)

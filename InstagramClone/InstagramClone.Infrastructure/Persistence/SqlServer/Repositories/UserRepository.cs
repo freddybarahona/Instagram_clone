@@ -78,6 +78,13 @@ namespace InstagramClone.Infrastructure.Persistence.SqlServer.Repositories
 
             return true;
         }
+        //metodo para validacion userId en PostId
+        public async Task<bool> IfExist(Guid id)
+        {
+            var exists = await context.Users.AnyAsync(x => x.IdUser == id) ? true : false;
+
+            return exists;
+        }
 
         public IQueryable<User> Queryable()
         {
