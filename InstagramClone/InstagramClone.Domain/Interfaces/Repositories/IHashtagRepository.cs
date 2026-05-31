@@ -6,6 +6,6 @@ namespace InstagramClone.Domain.Interfaces.Repositories
     {
         public Task Create(Hashtag hashtag);
 
-        public Task<Hashtag> GetByDescription(string description);
+        public Task<Hashtag?> GetByDescription(string description);
     }
 }

@@ -12,18 +12,30 @@ using System.Text.RegularExpressions;
 
 namespace InstagramClone.Application.Services
 {
-    public class PostService(IPostRepository repository, IUserRepository userRepo, IHashtagRepository hashtagRepo) : IPostService
+    public class PostService(IPostRepository repository, IUserRepository userRepo, IHashtagRepository hashtagRepo, IUnitOfWork uwu) : IPostService
     {
+        //primero se hara por separado luego se unira asi que tomalo en cuenta, por ahora necesitamos ver su funcionamiento en mentions y en hashtags
         private static List<string> ExtractHashTags(string text)
         {
 
             var matches = Regex.Matches(text, @"(?<=#)\w+");
 
             return matches
+                .Select(x => x.Value.ToLower())
+                .Distinct()
+                .ToList();
+        }
+
+        private static List<string> ExtractMentions(string text)
+        {
+            var matches = Regex.Matches(text, @"(?<=@)\w+");
+
+            return matches
                 .Select(x => x.Value)
                 .Distinct()
                 .ToList();
         }
+
         public async Task<GenericResponse<PostDTO>> PostCreate(CreatePostRequest model, Guid id)
         {
             var verify = await userRepo.IfExist(id);
@@ -65,21 +77,39 @@ namespace InstagramClone.Application.Services
                 CreatedAt = DateTimeHelper.UtcNow(),
             };
 
-            var tags = PostService.ExtractHashTags(model.PostDescription);
+            var tags = ExtractHashTags(model.PostDescription);
 
             foreach (var tag in tags)
             {
-                var hashtag = new Hashtag
+                //verificacion sobre existencia previa del hashtag
+                var hashtag = await hashtagRepo.GetByDescription(tag);
+                //si no existe en tabla lo guarda en la misma
+                if (hashtag is null)
                 {
-                    HashtagDescription = tag,
-                    CreatedAt = DateTimeHelper.UtcNow()
-                };
-
-                await hashtagRepo.Create(hashtag);
+                    hashtag = new Hashtag
+                    {
+                        HashtagDescription = tag,
+                        CreatedAt = DateTimeHelper.UtcNow()
+                    };
+                    //guarda el hashtag
+                    await hashtagRepo.Create(hashtag);
+                }
+                post.Hashtags.Add(hashtag); //esta linea genera la relacion en PostHashtag 
+                //ya que PostHashtag es una tabla intermedia y requiere trato especial
             }
+            var names = ExtractMentions(model.PostDescription);
+            foreach (var name in names)
+            {
+                var user = await userRepo.GetUser(name);
+                Console.WriteLine(user?.NameUser ?? "Usuario no encontrado");
+
+            }
+
             //mejor que un If ('*') - valida si necesita expiresAt
             post.ExpiresAt = model.IsStory ? DateTimeHelper.UtcNow().AddHours(24) : null;
             await repository.Create(post);
+            //cambios guardados unitariamente
+            await uwu.SaveChangesAsync();
 
             return ResponseHelper.Create(Map(post));
         }

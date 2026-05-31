@@ -1,6 +1,7 @@
 ﻿using InstagramClone.Domain.Database.SqlServer.Context;
 using InstagramClone.Domain.Database.SqlServer.Entities;
 using InstagramClone.Domain.Interfaces.Repositories;
+using Microsoft.EntityFrameworkCore;
 
 namespace InstagramClone.Infrastructure.Persistence.SqlServer.Repositories
 {
@@ -11,16 +12,12 @@ namespace InstagramClone.Infrastructure.Persistence.SqlServer.Repositories
         //metodos de repo
         public async Task Create(Hashtag hashtag)
         {
-            try
-            {
-                await context.Hashtags.AddAsync(hashtag);
+            await context.Hashtags.AddAsync(hashtag);
+        }
 
-                await context.SaveChangesAsync();
-            }
-            catch (Exception ex)
-            {
-                throw;
-            }
+        public async Task<Hashtag?> GetByDescription(string description)
+        {
+            return await context.Hashtags.FirstOrDefaultAsync(x => x.HashtagDescription == description);
         }
     }
 }

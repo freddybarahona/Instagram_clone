@@ -7,6 +7,7 @@ using InstagramClone.Domain.Interfaces.Repositories;
 using InstagramClone.Infrastructure.Persistence.SqlServer.Repositories;
 using InstagramClone.Shared.Constants;
 using InstagramClone.WebApi.Middlewares;
+using InstagramClone.WebApi.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -26,6 +27,8 @@ namespace InstagramClone.WebApi.Extensions
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IPostService, PostService>();
+            //---------------ADICION SERVICIO DE ACTUALIZACION DE HISTORIAS VENCIDAS AUTOMATICO-----------------
+            services.AddHostedService<StoryCleanupBackgroundService>();
         }
         /// <summary>
         /// anade un tipo de conexion a los repositorios
@@ -37,6 +40,8 @@ namespace InstagramClone.WebApi.Extensions
             services.AddTransient<IUserRepository, UserRepository>();
             services.AddTransient<ITypeUserRepository, TypeUserRepository>();
             services.AddTransient<IPostRepository, PostRepository>();
+            //---------------------INTEGRACION UOW--------------------------------
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
         }
 
         public static void AddMiddlewares(this IServiceCollection services)
