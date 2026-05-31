@@ -12,9 +12,6 @@ namespace InstagramClone.Infrastructure.Persistence.SqlServer.Repositories
             try
             {
                 await context.Users.AddAsync(user);
-
-                await context.SaveChangesAsync();
-
                 return user;
             }
             catch (Exception ex)
@@ -59,6 +56,11 @@ namespace InstagramClone.Infrastructure.Persistence.SqlServer.Repositories
             }
         }
 
+        public async Task<User?> GetUserUnName(string name)
+        {
+            return await context.Users.FirstOrDefaultAsync(x => x.UserUnName == name && x.DeletedAt == null);
+        }
+
         public async Task<bool> HasCreated()
         {
             try
@@ -74,9 +76,7 @@ namespace InstagramClone.Infrastructure.Persistence.SqlServer.Repositories
 
         public async Task<bool> IfExist(string name)
         {
-            await context.Users.AnyAsync(x => x.NameUser == name);
-
-            return true;
+            return await context.Users.AnyAsync(x => x.NameUser == name);
         }
         //metodo para validacion userId en PostId
         public async Task<bool> IfExist(Guid id)
@@ -84,6 +84,11 @@ namespace InstagramClone.Infrastructure.Persistence.SqlServer.Repositories
             var exists = await context.Users.AnyAsync(x => x.IdUser == id) ? true : false;
 
             return exists;
+        }
+
+        public async Task<bool> IfExistUserUnname(string name)
+        {
+            return await context.Users.AnyAsync(x => x.UserUnName == name);
         }
 
         public IQueryable<User> Queryable()

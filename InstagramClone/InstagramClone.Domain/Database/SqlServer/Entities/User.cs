@@ -23,6 +23,8 @@ public partial class User
 
     public DateTime? DeletedAt { get; set; }
 
+    public string UserUnName { get; set; } = null!;
+
     public virtual ICollection<Comment> Comments { get; set; } = new List<Comment>();
 
     public virtual ICollection<ConversationUser> ConversationUsers { get; set; } = new List<ConversationUser>();
@@ -35,11 +37,11 @@ public partial class User
 
     public virtual ICollection<Like> Likes { get; set; } = new List<Like>();
 
-    public virtual ICollection<PostMention> PostMentions { get; set; } = new List<PostMention>();
-
     public virtual ICollection<Post> Posts { get; set; } = new List<Post>();
 
     public virtual ICollection<SavedPost> SavedPosts { get; set; } = new List<SavedPost>();
 
     public virtual TypeUser TypeUser { get; set; } = null!;
+
+    public virtual ICollection<Post> PostsNavigation { get; set; } = new List<Post>();
 }

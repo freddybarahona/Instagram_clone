@@ -31,7 +31,7 @@ namespace InstagramClone.Application.Services
             var matches = Regex.Matches(text, @"(?<=@)\w+");
 
             return matches
-                .Select(x => x.Value)
+                .Select(x => x.Value.ToLower())
                 .Distinct()
                 .ToList();
         }
@@ -100,11 +100,13 @@ namespace InstagramClone.Application.Services
             var names = ExtractMentions(model.PostDescription);
             foreach (var name in names)
             {
-                var user = await userRepo.GetUser(name);
-                Console.WriteLine(user?.NameUser ?? "Usuario no encontrado");
+                var user = await userRepo.GetUserUnName(name);
+                if (user is not null)
+                {
+                    post.Users.Add(user);
+                }
 
             }
-
             //mejor que un If ('*') - valida si necesita expiresAt
             post.ExpiresAt = model.IsStory ? DateTimeHelper.UtcNow().AddHours(24) : null;
             await repository.Create(post);

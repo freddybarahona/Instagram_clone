@@ -33,11 +33,11 @@ public partial class Post
 
     public virtual ICollection<Like> Likes { get; set; } = new List<Like>();
 
-    public virtual ICollection<PostMention> PostMentions { get; set; } = new List<PostMention>();
-
     public virtual ICollection<SavedPost> SavedPosts { get; set; } = new List<SavedPost>();
 
     public virtual User User { get; set; } = null!;
 
     public virtual ICollection<Hashtag> Hashtags { get; set; } = new List<Hashtag>();
+
+    public virtual ICollection<User> Users { get; set; } = new List<User>();
 }

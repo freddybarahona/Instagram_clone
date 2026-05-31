@@ -9,7 +9,7 @@ USE InstagramClone;
 GO
 
 -- ============================================================
---  TABLA: TypeUsers
+--  TABLA: TypeUsers  -COMPLETADO
 -- ============================================================
 
 CREATE TABLE TypeUsers(
@@ -38,7 +38,7 @@ CREATE TABLE TypeReactions(
 GO
 
 -- ============================================================
---  TABLA: Hashtags
+--  TABLA: Hashtags -COMPLETADO
 -- ============================================================
 
 CREATE TABLE Hashtags(
@@ -54,7 +54,7 @@ CREATE TABLE Hashtags(
 GO
 
 -- ============================================================
---  TABLA: Users
+--  TABLA: Users -Completado
 -- ============================================================
 
 CREATE TABLE Users(
@@ -153,7 +153,7 @@ CREATE TABLE LetterMessages(
 GO
 
 -- ============================================================
---  TABLA: Posts
+--  TABLA: Posts -COMPLETADO
 -- ============================================================
 
 CREATE TABLE Posts(
@@ -181,7 +181,7 @@ CREATE TABLE Posts(
 GO
 
 -- ============================================================
---  TABLA: PostHashtags
+--  TABLA: PostHashtags -COMPLETADO
 -- ============================================================
 
 CREATE TABLE PostHashtags(
@@ -198,14 +198,12 @@ CREATE TABLE PostHashtags(
 GO
 
 -- ============================================================
---  TABLA: PostMentions
+--  TABLA: PostMentions -COMPLETADO
 -- ============================================================
 
 CREATE TABLE PostMentions(
 	PostId					UNIQUEIDENTIFIER	NOT NULL,
 	UserId					UNIQUEIDENTIFIER	NOT NULL,
-	CreatedAt				DATETIME2			NOT NULL DEFAULT SYSUTCDATETIME(),
-	DeletedAt				DATETIME2			NULL,
 
 	CONSTRAINT PK_PostMentions PRIMARY KEY (PostId, UserId),
 
@@ -283,7 +281,7 @@ CREATE TABLE SavedPosts(
 		REFERENCES Posts(PostId)
 );
 GO
-
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 -- ============================================================
 --  Rellenado: TypeUsers
 -- ============================================================
@@ -318,3 +316,14 @@ CREATE INDEX IX_Posts_UserId ON Posts(UserId);
 CREATE INDEX IX_Comments_PostId ON Comments(PostId);
 CREATE INDEX IX_Likes_PostId ON Likes(PostId);
 CREATE INDEX IX_Followings_FollowingId ON Followings(FollowingId);
+
+
+-- ============================================================
+--  Cambios posteriores 
+-- ============================================================
+
+ALTER TABLE Users
+ALTER COLUMN UserUnName NVARCHAR(50) NOT NULL;
+
+ALTER TABLE Users
+ADD CONSTRAINT UQ_UserUnName UNIQUE(UserUnName);

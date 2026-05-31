@@ -14,14 +14,24 @@ using Microsoft.Extensions.Configuration;
 
 namespace InstagramClone.Application.Services
 {
-    public class UserService(IUserRepository repository, ITypeUserRepository typeUserRepository, IConfiguration configuration) : IUserService
+    public class UserService(IUserRepository repository, ITypeUserRepository typeUserRepository, IConfiguration configuration, IUnitOfWork uwu) : IUserService
     {
+        //metodo privado para generar el nombre real para usuarios
+        private async Task<string> GenerateNameUnUser(string name)
+        {
+            var baseUserName = name.Replace(" ", "").ToLower();
+            return baseUserName;
+        }
         public async Task<GenericResponse<UserDTO>> Create(CreateUserRequest model)
         {
+            var nameUnUser = await GenerateNameUnUser(model.NameUser);
+
             var typeUser = await typeUserRepository.Get(model.TypeUser); // obtiene el tipo de usuario especificado en la tabla TypeUser
+
             var userEntity = new Domain.Database.SqlServer.Entities.User // crea una nueva entidad de usuario con los datos proporcionados en el modelo de solicitud
             {
                 NameUser = model.NameUser,
+                UserUnName = nameUnUser,
                 Email = model.Email,
                 Password = Hasher.HashPassword(model.Password),
                 Visibility = model.Visibility,
@@ -31,6 +41,8 @@ namespace InstagramClone.Application.Services
             };
 
             var created = await repository.Create(userEntity); // guarda la nueva entidad de usuario en la base de datos utilizando el repositorio de usuarios
+
+            await uwu.SaveChangesAsync();
             return ResponseHelper.Create(Map(created));
         }
 
@@ -85,6 +97,7 @@ namespace InstagramClone.Application.Services
             {
                 IdUser = user.IdUser,
                 NameUser = user.NameUser,
+                NameUnUser = user.UserUnName,
                 Email = user.Email,
                 Password = user.Password,
                 Visibility = user.Visibility,
@@ -116,6 +129,7 @@ namespace InstagramClone.Application.Services
                 new User
                 {
                     NameUser = nameUser,
+                    UserUnName = await GenerateNameUnUser(nameUser),
                     Email = email,
                     Password = Hasher.HashPassword(password),
                     TypeUserId = Guid.Parse(idTypeUser) //recuerda como convertirlo te puede servir despues

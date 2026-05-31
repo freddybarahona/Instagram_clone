@@ -32,8 +32,6 @@ public partial class InstagramCloneContext : DbContext
 
     public virtual DbSet<Post> Posts { get; set; }
 
-    public virtual DbSet<PostMention> PostMentions { get; set; }
-
     public virtual DbSet<SavedPost> SavedPosts { get; set; }
 
     public virtual DbSet<TypeReaction> TypeReactions { get; set; }
@@ -204,23 +202,23 @@ public partial class InstagramCloneContext : DbContext
                         j.HasKey("PostId", "HashtagId");
                         j.ToTable("PostHashtags");
                     });
-        });
 
-        modelBuilder.Entity<PostMention>(entity =>
-        {
-            entity.HasKey(e => new { e.PostId, e.UserId });
-
-            entity.Property(e => e.CreatedAt).HasDefaultValueSql("(sysutcdatetime())");
-
-            entity.HasOne(d => d.Post).WithMany(p => p.PostMentions)
-                .HasForeignKey(d => d.PostId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_PostMentions_Posts");
-
-            entity.HasOne(d => d.User).WithMany(p => p.PostMentions)
-                .HasForeignKey(d => d.UserId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_PostMentions_Users");
+            entity.HasMany(d => d.Users).WithMany(p => p.PostsNavigation)
+                .UsingEntity<Dictionary<string, object>>(
+                    "PostMention",
+                    r => r.HasOne<User>().WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.ClientSetNull)
+                        .HasConstraintName("FK_PostMentions_Users"),
+                    l => l.HasOne<Post>().WithMany()
+                        .HasForeignKey("PostId")
+                        .OnDelete(DeleteBehavior.ClientSetNull)
+                        .HasConstraintName("FK_PostMentions_Posts"),
+                    j =>
+                    {
+                        j.HasKey("PostId", "UserId");
+                        j.ToTable("PostMentions");
+                    });
         });
 
         modelBuilder.Entity<SavedPost>(entity =>
@@ -267,12 +265,15 @@ public partial class InstagramCloneContext : DbContext
 
             entity.HasIndex(e => e.NameUser, "UQ_NameUser").IsUnique();
 
+            entity.HasIndex(e => e.UserUnName, "UQ_UserUnName").IsUnique();
+
             entity.Property(e => e.IdUser).HasDefaultValueSql("(newid())");
             entity.Property(e => e.CreatedAt).HasDefaultValueSql("(sysutcdatetime())");
             entity.Property(e => e.Email).HasMaxLength(100);
             entity.Property(e => e.NameUser).HasMaxLength(50);
             entity.Property(e => e.Password).HasMaxLength(200);
             entity.Property(e => e.UpdatedAt).HasDefaultValueSql("(sysutcdatetime())");
+            entity.Property(e => e.UserUnName).HasMaxLength(50);
             entity.Property(e => e.Visibility).HasDefaultValue(true);
 
             entity.HasOne(d => d.TypeUser).WithMany(p => p.Users)
