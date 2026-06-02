@@ -8,6 +8,7 @@ namespace InstagramClone.WebApi.Extensions
         {
             app.UseMiddleware<ErrorHandlerMiddleware>();
             app.UseHttpsRedirection();
+            app.UseCors();//aqui aplica la politica 
             app.UseAuthorization();
             endpoints.MapControllers();
         }

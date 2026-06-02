@@ -22,5 +22,8 @@
         public const string AUTHORIZE_REGULAR = "2724189B-BCA3-4C40-8A55-5526D2E64A70";
         public const string AUTHORIZE_CONSTANT_CREATOR = "BF197505-7EEB-4FB3-B004-212A67D82018";
         public const string AUTHORIZE_BUSINESS_ACCOUNT = "4C325113-B485-46F3-9783-CCB7362E8EC1";
+
+        //DATOS CORS
+        public const string CORS_ORIGINS = "Cors:AllowedOrigins";
     }
 }

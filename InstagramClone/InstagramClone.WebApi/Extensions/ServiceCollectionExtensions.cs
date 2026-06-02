@@ -107,6 +107,17 @@ namespace InstagramClone.WebApi.Extensions
             services.AddServices();
             services.AddMiddlewares();
             services.AddLogging();
+            //-----------------------CORS-----------------------
+            var allowedOrigins = configuration.GetSection(ConfigurationConstants.CORS_ORIGINS).Get<string[]>();//obtenemos los origenes permitidos desde la configuracion
+            services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(policy =>
+                {
+                    policy.WithOrigins(allowedOrigins)
+                        .AllowAnyHeader()
+                        .AllowAnyMethod();
+                });
+            });
             //-----------------------AUTENTICACION DEL USUARIO-----------------------
             AddAuth(services, configuration);
             //-----------------------INICIALIZACION DE USUARIO-----------------------
