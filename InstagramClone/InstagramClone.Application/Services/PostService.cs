@@ -8,6 +8,7 @@ using InstagramClone.Domain.Exceptions;
 using InstagramClone.Domain.Interfaces.Repositories;
 using InstagramClone.Shared.Constants;
 using InstagramClone.Shared.Helper;
+using Microsoft.EntityFrameworkCore;
 using System.Text.RegularExpressions;
 
 namespace InstagramClone.Application.Services
@@ -116,6 +117,38 @@ namespace InstagramClone.Application.Services
             return ResponseHelper.Create(Map(post));
         }
 
+        public async Task<GenericResponse<List<PostDTO>>> GetPosts(GetPostsRequest model)
+        {
+            var queryable = repository.Queryable();
+
+            if (!string.IsNullOrWhiteSpace(model.PostDescription))
+            {
+                queryable = queryable.Where(x => x.PostDescription.Contains(model.PostDescription ?? ""));
+            }
+
+            if (!string.IsNullOrWhiteSpace(model.UserName))
+            {
+                queryable = queryable.Where(x => x.User.NameUser.Contains(model.UserName));
+            }
+
+            if (model.hashtags is not null && model.hashtags.Any())
+            {
+                queryable = queryable.Where(post => post.Hashtags.Any(h => model.hashtags.Contains(h.HashtagDescription)));
+            }
+
+            var Posts = await queryable
+                            .OrderByDescending(x => x.CreatedAt)
+                            .Skip(model.offset)
+                            .Take(model.limit)
+                            .ToListAsync();
+            List<PostDTO> mapped = [];
+            foreach (var Post in Posts)
+            {
+                mapped.Add(Map(Post));
+            }
+
+            return ResponseHelper.Create(mapped);
+        }
 
 
 
@@ -134,6 +167,14 @@ namespace InstagramClone.Application.Services
                 CreatedAt = post.CreatedAt,
                 ExpiresAt = post.ExpiresAt
             };
+        }
+
+        public async Task<GenericResponse<List<PostDTO>>> GetPostsByUserId(Guid UserId)
+        {
+            var Posts = await repository.GetPostsByUserId(UserId);
+            var mapped = Posts.Select(Map).ToList();
+
+            return ResponseHelper.Create(mapped);
         }
     }
 }

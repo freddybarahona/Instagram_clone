@@ -27,7 +27,7 @@ namespace InstagramClone.WebApi.Controllers
         }
 
         [HttpGet("{id:guid}")]//este metodo es solo para administradores
-        [Authorize(Roles = $"{ConfigurationConstants.AUTHORIZE_ADMINISTRATOR}")]
+        [Authorize(Roles = $"{ConfigurationConstants.AUTHORIZE_REGULAR},{ConfigurationConstants.AUTHORIZE_ADMINISTRATOR},{ConfigurationConstants.AUTHORIZE_CONSTANT_CREATOR},{ConfigurationConstants.AUTHORIZE_BUSINESS_ACCOUNT}")]
         public async Task<IActionResult> GetUserById(Guid id)
         {
             var srv = await service.GetUserById(id);
