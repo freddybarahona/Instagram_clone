@@ -1,6 +1,7 @@
 ﻿using InstagramClone.Domain.Database.SqlServer.Context;
 using InstagramClone.Domain.Database.SqlServer.Entities;
 using InstagramClone.Domain.Interfaces.Repositories;
+using InstagramClone.Shared.Helper;
 using Microsoft.EntityFrameworkCore;
 
 namespace InstagramClone.Infrastructure.Persistence.SqlServer.Repositories
@@ -18,6 +19,12 @@ namespace InstagramClone.Infrastructure.Persistence.SqlServer.Repositories
             {
                 throw;
             }
+        }
+
+        public async Task<bool> DeleteUser(User user)
+        {
+            user.DeletedAt = DateTimeHelper.UtcNow();
+            return true;
         }
 
         public async Task<User?> Get(string email)

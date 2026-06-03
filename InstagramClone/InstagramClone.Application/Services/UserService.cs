@@ -90,21 +90,14 @@ namespace InstagramClone.Application.Services
             return await repository.GetUserById(UserId)
             ?? throw new NotFoundException(ResponseConstants.USER_NOT_EXISTS);
         }
-
-        private static UserDTO Map(User user)
+        public async Task<GenericResponse<bool>> DeleteUser(Guid UserId)
         {
-            return new UserDTO
-            {
-                IdUser = user.IdUser,
-                NameUser = user.NameUser,
-                NameUnUser = user.UserUnName,
-                Email = user.Email,
-                Password = user.Password,
-                Visibility = user.Visibility,
-                TypeUser = user.TypeUser?.IdTypeUser.ToString() ?? user.TypeUserId.ToString(), //la primera opcion es porque el metodo crear usuario hace un llamado a la tabla de TypeUser para comparar pero el segundo llamado es porque el get no hace ese llamado ya que debe usar el id que ya esta en la tabla User por eso el primer llamado va a dar null
-                CreatedAt = user.CreatedAt,
-            };
+            var user = await GetTheUser(UserId);
+            var isDeleted = await repository.DeleteUser(user);
+            await uwu.SaveChangesAsync();
+            return ResponseHelper.Create(isDeleted);
         }
+
 
         //metodo para crear al primer usuario
         public async Task CreateFirstUser()
@@ -136,5 +129,20 @@ namespace InstagramClone.Application.Services
                 });
 
         }
+        private static UserDTO Map(User user)
+        {
+            return new UserDTO
+            {
+                IdUser = user.IdUser,
+                NameUser = user.NameUser,
+                NameUnUser = user.UserUnName,
+                Email = user.Email,
+                Password = user.Password,
+                Visibility = user.Visibility,
+                TypeUser = user.TypeUser?.IdTypeUser.ToString() ?? user.TypeUserId.ToString(), //la primera opcion es porque el metodo crear usuario hace un llamado a la tabla de TypeUser para comparar pero el segundo llamado es porque el get no hace ese llamado ya que debe usar el id que ya esta en la tabla User por eso el primer llamado va a dar null
+                CreatedAt = user.CreatedAt,
+            };
+        }
+
     }
 }

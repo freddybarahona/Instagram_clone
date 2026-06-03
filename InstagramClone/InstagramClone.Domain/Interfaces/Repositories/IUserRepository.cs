@@ -15,7 +15,7 @@ namespace InstagramClone.Domain.Interfaces.Repositories
         Task<bool> IfExist(Guid id);
         IQueryable<User> Queryable();
         Task<bool> HasCreated();
-
+        Task<bool> DeleteUser(User user);
 
     }
 }

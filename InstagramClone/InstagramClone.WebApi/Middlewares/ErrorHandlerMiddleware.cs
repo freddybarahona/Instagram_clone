@@ -7,6 +7,7 @@ namespace InstagramClone.WebApi.Middlewares
 {
     public class ErrorHandlerMiddleware(ILogger<ErrorHandlerMiddleware> logger) : IMiddleware
     {
+
         public async Task InvokeAsync(HttpContext context, RequestDelegate next)
         {
             try

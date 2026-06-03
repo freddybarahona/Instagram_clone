@@ -1,4 +1,5 @@
 using InstagramClone.WebApi.Extensions;
+using Scalar.AspNetCore;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -18,6 +19,7 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
+    app.MapScalarApiReference();// generador de documentacion de api en scalar
     app.MapOpenApi();
 }
 

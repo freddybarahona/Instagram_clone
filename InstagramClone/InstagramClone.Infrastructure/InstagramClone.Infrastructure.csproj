@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\InstagramClone.Domain\InstagramClone.Domain.csproj" />
+    <ProjectReference Include="..\InstagramClone.Shared\InstagramClone.Shared.csproj" />
   </ItemGroup>
 
 </Project>

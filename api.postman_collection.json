@@ -1,0 +1,311 @@
+{
+  "info": {
+    "_postman_id": "118f0d25-7385-4eed-b802-642795d4f6ab",
+    "name": "api",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "53325324",
+    "_collection_link": "https://go.postman.co/collection/53325324-118f0d25-7385-4eed-b802-642795d4f6ab?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "User",
+      "item": [
+        {
+          "name": "Create User",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"NameUser\":\"John Doe Doe 4\"\r\n    ,\"Email\":\"John3@gmail.com\"\r\n    ,\"Password\":\"John3543210\"\r\n    ,\"RewritePassword\":\"John3543210\"\r\n    //area superior Obligatoria && area inferior predefinida pero cambiable\r\n    , \"Visibility\":true\r\n    , \"TypeUser\": \"CONTENT_CREATOR\" \r\n    //con el nombre que ingresa se busca en la tabla de typeUser y se obtiene el id para ver su nivel de usuario\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{UrlFuente}}/api/users",
+              "host": [
+                "{{UrlFuente}}"
+              ],
+              "path": [
+                "api",
+                "users"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Real User",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{UrlFuente}}/api/users/?NameUser=Freddy",
+              "host": [
+                "{{UrlFuente}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                ""
+              ],
+              "query": [
+                {
+                  "key": "NameUser",
+                  "value": "Freddy"
+                },
+                {
+                  "key": "IdUser",
+                  "value": null,
+                  "type": "text",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Soft Delete User",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{UrlFuente}}/api/users/22B0FC2E-A86D-491D-8C6B-B3D7ABCAF828",
+              "host": [
+                "{{UrlFuente}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "22B0FC2E-A86D-491D-8C6B-B3D7ABCAF828"
+              ],
+              "query": [
+                {
+                  "key": "NameUser",
+                  "value": "Freddy",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get User By Details",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "{{UrlFuente}}/api/users/",
+              "host": [
+                "{{UrlFuente}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                ""
+              ],
+              "query": [
+                {
+                  "key": "nameUser",
+                  "value": "Freddy",
+                  "type": "text",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get User By Id",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "{{UrlFuente}}/api/users/",
+              "host": [
+                "{{UrlFuente}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                ""
+              ],
+              "query": [
+                {
+                  "key": "nameUser",
+                  "value": "Freddy",
+                  "type": "text",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Posts",
+      "item": [
+        {
+          "name": "Create Post",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "IsStory",
+                  "value": "true",
+                  "type": "text",
+                  "uuid": "c7160d92-0cf4-4a62-960d-555dfd76a55c"
+                },
+                {
+                  "key": "PostDescription",
+                  "value": "hola que tal @freddybarahona #2026 #holi #moli #papita",
+                  "type": "text",
+                  "uuid": "6d68aa7b-d7c4-431b-ba4f-7190e14d173e"
+                },
+                {
+                  "key": "LocationName",
+                  "value": "Ecuador",
+                  "type": "text",
+                  "uuid": "617e7c0a-f5b8-4ae2-8cca-fd19cba5a7a9"
+                },
+                {
+                  "key": "Latitude",
+                  "value": "90",
+                  "type": "text",
+                  "uuid": "db9e861b-e3ce-4efb-a137-da979defa9d4"
+                },
+                {
+                  "key": "Longitude",
+                  "value": "90",
+                  "type": "text",
+                  "uuid": "eb055857-39f9-4cd3-a4d8-bd8c16fd2f06"
+                },
+                {
+                  "key": "MediaUrl",
+                  "type": "file",
+                  "uuid": "30fcf3f3-8f3f-4241-b696-fbba062628dd",
+                  "src": "/C:/Users/USER/Desktop/freddy barahona/portafolio/certificaciones/mentoria de Viamatica bootcamp Full Stack/publicaciones LinkedIn e Instagram/finales/complejidad Fullstack.png"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{UrlFuente}}api/Posts/E35CF2DA-3254-4276-BF44-4DB20A42D823",
+              "host": [
+                "{{UrlFuente}}api"
+              ],
+              "path": [
+                "Posts",
+                "E35CF2DA-3254-4276-BF44-4DB20A42D823"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Posts by details",
+          "request": {
+            "method": "GET",
+            "header": []
+          },
+          "response": []
+        },
+        {
+          "name": "Get Posts by Id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{UrlFuente}}/api/posts/E35CF2DA-3254-4276-BF44-4DB20A42D823",
+              "host": [
+                "{{UrlFuente}}"
+              ],
+              "path": [
+                "api",
+                "posts",
+                "E35CF2DA-3254-4276-BF44-4DB20A42D823"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "//llena una variable con nuestra response en formato json\r",
+                  "const rspJson = pm.response.json();\r",
+                  "pm.environment.set(\"Token\", rspJson.data)\r",
+                  "// toma el script ejecutado y va a environment para buscar la var Token y le pondra el contenido de data osea el token generado "
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"Email\": \"changeme@userroot.com\",\r\n    \"Password\": \"changeme\"\r\n    /*\"Email\": \"Frebarahona@est.ecotec.edu.ec\",\r\n    \"Password\": \"Freddy543210\"*/\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{UrlFuente}}/api/auth/login",
+              "host": [
+                "{{UrlFuente}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
